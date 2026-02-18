@@ -4,7 +4,8 @@ import { StatCard } from "@/components/ui/stat-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { getClassStatistics, getPerformanceLevel, getAttendanceStatus } from "@/lib/mockData";
+import { useData } from "@/context/DataContext";
+import { getClassStatisticsWithData, getPerformanceLevel, getAttendanceStatus } from "@/lib/mockData";
 import { 
   Users, 
   TrendingUp, 
@@ -17,8 +18,6 @@ import {
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 
-const stats = getClassStatistics();
-
 const performanceLevelColors = {
   excellent: 'bg-success/15 text-success border-success/20',
   good: 'bg-primary/15 text-primary border-primary/20',
@@ -30,6 +29,9 @@ const performanceLevelColors = {
 const COLORS = ['hsl(142, 71%, 45%)', 'hsl(262, 83%, 58%)', 'hsl(38, 92%, 50%)', 'hsl(0, 84%, 60%)'];
 
 export default function TeacherDashboard() {
+  const { students, subjects, markRecords } = useData();
+  const stats = getClassStatisticsWithData(students, subjects, markRecords);
+
   const subjectChartData = stats.subjectStats.map(s => ({
     name: s.code,
     avgMarks: s.avgPercentage,
@@ -43,6 +45,17 @@ export default function TeacherDashboard() {
     { name: 'Average (50-69%)', value: stats.allStudents.filter(s => s.avgPercentage >= 50 && s.avgPercentage < 70).length },
     { name: 'At Risk (<50%)', value: stats.allStudents.filter(s => s.avgPercentage < 50).length },
   ];
+
+  if (!students.length) {
+    return (
+      <Layout>
+        <div className="container py-20 text-center">
+          <p className="text-muted-foreground text-lg mb-4">No class data available.</p>
+          <p className="text-sm text-muted-foreground">Upload a CSV or Excel file from the Upload page, or reset to sample data.</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

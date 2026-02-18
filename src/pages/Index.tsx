@@ -95,11 +95,16 @@ export default function Index() {
               </p>
               
               {/* CTA Buttons */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                <Link to="/student">
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center sm:flex-wrap">
+                <Link to="/upload">
                   <Button size="lg" className="gradient-primary text-white border-0 rounded-full px-8 py-6 text-base gap-2 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all w-full sm:w-auto">
-                    View Dashboard
+                    Upload Data
                     <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link to="/student">
+                  <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-base gap-2 border-border hover:bg-secondary w-full sm:w-auto">
+                    View Dashboard
                   </Button>
                 </Link>
                 <Link to="/teacher">
@@ -212,9 +217,9 @@ export default function Index() {
                     1
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Input Data</h4>
+                    <h4 className="font-semibold mb-1">Upload Data</h4>
                     <p className="text-muted-foreground leading-relaxed">
-                      Enter student marks and attendance records into the system.
+                      Upload a CSV or Excel file with student marks and attendance. The dashboard updates automatically from your data.
                     </p>
                   </div>
                 </div>

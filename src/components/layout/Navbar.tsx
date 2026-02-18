@@ -1,10 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Home, LayoutGrid, Users, Lightbulb, GraduationCap } from "lucide-react";
+import { Home, LayoutGrid, Users, Lightbulb, GraduationCap, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
+  { href: "/upload", label: "Upload", icon: Upload },
   { href: "/student", label: "Dashboard", icon: LayoutGrid },
   { href: "/teacher", label: "Students", icon: Users },
   { href: "/student", label: "Insights", icon: Lightbulb },

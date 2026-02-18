@@ -33,8 +33,8 @@ export interface PerformanceInsight {
   recommendation: string;
 }
 
-// Sample Students
-export const students: Student[] = [
+// Sample Students (default / mock)
+export const defaultStudents: Student[] = [
   { id: 's1', name: 'Arjun Sharma', rollNo: 'CS2101', email: 'arjun@college.edu', semester: 5, department: 'Computer Science' },
   { id: 's2', name: 'Priya Patel', rollNo: 'CS2102', email: 'priya@college.edu', semester: 5, department: 'Computer Science' },
   { id: 's3', name: 'Rahul Kumar', rollNo: 'CS2103', email: 'rahul@college.edu', semester: 5, department: 'Computer Science' },
@@ -42,8 +42,8 @@ export const students: Student[] = [
   { id: 's5', name: 'Vikram Singh', rollNo: 'CS2105', email: 'vikram@college.edu', semester: 5, department: 'Computer Science' },
 ];
 
-// Sample Subjects
-export const subjects: Subject[] = [
+// Sample Subjects (default / mock)
+export const defaultSubjects: Subject[] = [
   { id: 'sub1', name: 'Data Structures', code: 'CS301', credits: 4, maxMarks: 100 },
   { id: 'sub2', name: 'Database Systems', code: 'CS302', credits: 4, maxMarks: 100 },
   { id: 'sub3', name: 'Operating Systems', code: 'CS303', credits: 3, maxMarks: 100 },
@@ -51,8 +51,8 @@ export const subjects: Subject[] = [
   { id: 'sub5', name: 'Software Engineering', code: 'CS305', credits: 3, maxMarks: 100 },
 ];
 
-// Sample Mark Records
-export const markRecords: MarkRecord[] = [
+// Sample Mark Records (default / mock)
+export const defaultMarkRecords: MarkRecord[] = [
   // Arjun - Good performer
   { studentId: 's1', subjectId: 'sub1', internal1: 42, internal2: 45, assignment: 18, attendance: 92 },
   { studentId: 's1', subjectId: 'sub2', internal1: 38, internal2: 40, assignment: 17, attendance: 88 },
@@ -89,6 +89,11 @@ export const markRecords: MarkRecord[] = [
   { studentId: 's5', subjectId: 'sub5', internal1: 24, internal2: 22, assignment: 12, attendance: 58 },
 ];
 
+// Backward compatibility: alias for default data
+export const students = defaultStudents;
+export const subjects = defaultSubjects;
+export const markRecords = defaultMarkRecords;
+
 // Helper functions for calculations
 export function calculateTotalMarks(record: MarkRecord): number {
   return record.internal1 + record.internal2 + record.assignment;
@@ -123,16 +128,19 @@ export function getAttendanceStatus(attendance: number): 'safe' | 'warning' | 'd
   return 'danger';
 }
 
-// Rule-based insight generator
-export function generateInsights(studentId: string): PerformanceInsight[] {
-  const studentRecords = markRecords.filter(r => r.studentId === studentId);
+// Rule-based insight generator (with explicit data)
+export function generateInsightsWithData(
+  studentId: string,
+  records: MarkRecord[],
+  subjectList: Subject[]
+): PerformanceInsight[] {
+  const studentRecords = records.filter(r => r.studentId === studentId);
   const insights: PerformanceInsight[] = [];
-  
-  // Calculate averages
+  if (studentRecords.length === 0) return insights;
+
   const avgAttendance = studentRecords.reduce((sum, r) => sum + r.attendance, 0) / studentRecords.length;
   const avgPercentage = studentRecords.reduce((sum, r) => sum + calculatePercentage(r), 0) / studentRecords.length;
-  
-  // Rule 1: Attendance check
+
   if (avgAttendance < 75) {
     insights.push({
       type: 'danger',
@@ -148,8 +156,7 @@ export function generateInsights(studentId: string): PerformanceInsight[] {
       recommendation: 'Keep up the consistency. Your regular presence helps you stay connected with the course material.',
     });
   }
-  
-  // Rule 2: Performance trend
+
   const performanceDrops = studentRecords.filter(r => r.internal2 < r.internal1);
   if (performanceDrops.length > studentRecords.length / 2) {
     insights.push({
@@ -159,12 +166,10 @@ export function generateInsights(studentId: string): PerformanceInsight[] {
       recommendation: 'Focus on revision. Consider forming study groups and consulting your professors during office hours.',
     });
   }
-  
-  // Rule 3: Subject-specific alerts
+
   studentRecords.forEach(record => {
-    const subject = subjects.find(s => s.id === record.subjectId);
+    const subject = subjectList.find(s => s.id === record.subjectId);
     const percentage = calculatePercentage(record);
-    
     if (percentage < 40 && subject) {
       insights.push({
         type: 'danger',
@@ -174,8 +179,7 @@ export function generateInsights(studentId: string): PerformanceInsight[] {
       });
     }
   });
-  
-  // Rule 4: Assignment performance
+
   const lowAssignments = studentRecords.filter(r => r.assignment < 12);
   if (lowAssignments.length > 0) {
     insights.push({
@@ -185,8 +189,7 @@ export function generateInsights(studentId: string): PerformanceInsight[] {
       recommendation: 'Submit assignments on time and focus on quality. Ask for feedback from instructors.',
     });
   }
-  
-  // Rule 5: High performer recognition
+
   if (avgPercentage >= 85) {
     insights.push({
       type: 'success',
@@ -195,17 +198,26 @@ export function generateInsights(studentId: string): PerformanceInsight[] {
       recommendation: 'Consider helping classmates through peer tutoring. Apply for academic scholarships.',
     });
   }
-  
+
   return insights;
 }
 
-// Get student performance summary
-export function getStudentSummary(studentId: string) {
-  const student = students.find(s => s.id === studentId);
-  const records = markRecords.filter(r => r.studentId === studentId);
-  
-  const subjectPerformance = records.map(record => {
-    const subject = subjects.find(s => s.id === record.subjectId);
+export function generateInsights(studentId: string): PerformanceInsight[] {
+  return generateInsightsWithData(studentId, markRecords, subjects);
+}
+
+// Get student performance summary (with explicit data)
+export function getStudentSummaryWithData(
+  studentId: string,
+  studentList: Student[],
+  subjectList: Subject[],
+  records: MarkRecord[]
+) {
+  const student = studentList.find(s => s.id === studentId);
+  const studentRecords = records.filter(r => r.studentId === studentId);
+
+  const subjectPerformance = studentRecords.map(record => {
+    const subject = subjectList.find(s => s.id === record.subjectId);
     const percentage = calculatePercentage(record);
     return {
       subject: subject?.name || 'Unknown',
@@ -219,10 +231,14 @@ export function getStudentSummary(studentId: string) {
       attendance: record.attendance,
     };
   });
-  
-  const avgPercentage = subjectPerformance.reduce((sum, s) => sum + s.percentage, 0) / subjectPerformance.length;
-  const avgAttendance = subjectPerformance.reduce((sum, s) => sum + s.attendance, 0) / subjectPerformance.length;
-  
+
+  const avgPercentage = subjectPerformance.length
+    ? subjectPerformance.reduce((sum, s) => sum + s.percentage, 0) / subjectPerformance.length
+    : 0;
+  const avgAttendance = subjectPerformance.length
+    ? subjectPerformance.reduce((sum, s) => sum + s.attendance, 0) / subjectPerformance.length
+    : 0;
+
   return {
     student,
     subjectPerformance,
@@ -230,37 +246,57 @@ export function getStudentSummary(studentId: string) {
     avgAttendance: Math.round(avgAttendance),
     overallGrade: getGrade(avgPercentage),
     performanceLevel: getPerformanceLevel(avgPercentage),
-    insights: generateInsights(studentId),
+    insights: generateInsightsWithData(studentId, records, subjectList),
   };
 }
 
-// Get class statistics for teachers
-export function getClassStatistics() {
-  const studentSummaries = students.map(s => getStudentSummary(s.id));
-  
+export function getStudentSummary(studentId: string) {
+  return getStudentSummaryWithData(studentId, students, subjects, markRecords);
+}
+
+// Get class statistics for teachers (with explicit data)
+export function getClassStatisticsWithData(
+  studentList: Student[],
+  subjectList: Subject[],
+  records: MarkRecord[]
+) {
+  const studentSummaries = studentList.map(s =>
+    getStudentSummaryWithData(s.id, studentList, subjectList, records)
+  );
+
   const atRiskStudents = studentSummaries.filter(s => s.avgPercentage < 50 || s.avgAttendance < 75);
   const topPerformers = studentSummaries.filter(s => s.avgPercentage >= 85).sort((a, b) => b.avgPercentage - a.avgPercentage);
-  
-  const classAvgPercentage = studentSummaries.reduce((sum, s) => sum + s.avgPercentage, 0) / studentSummaries.length;
-  const classAvgAttendance = studentSummaries.reduce((sum, s) => sum + s.avgAttendance, 0) / studentSummaries.length;
-  
-  // Subject-wise analysis
-  const subjectStats = subjects.map(subject => {
-    const subjectRecords = markRecords.filter(r => r.subjectId === subject.id);
-    const avgMarks = subjectRecords.reduce((sum, r) => sum + calculateTotalMarks(r), 0) / subjectRecords.length;
-    const avgAttendance = subjectRecords.reduce((sum, r) => sum + r.attendance, 0) / subjectRecords.length;
-    
+
+  const classAvgPercentage = studentSummaries.length
+    ? studentSummaries.reduce((sum, s) => sum + s.avgPercentage, 0) / studentSummaries.length
+    : 0;
+  const classAvgAttendance = studentSummaries.length
+    ? studentSummaries.reduce((sum, s) => sum + s.avgAttendance, 0) / studentSummaries.length
+    : 0;
+
+  const subjectStats = subjectList.map(subject => {
+    const subjectRecords = records.filter(r => r.subjectId === subject.id);
+    const avgMarks = subjectRecords.length
+      ? subjectRecords.reduce((sum, r) => sum + calculateTotalMarks(r), 0) / subjectRecords.length
+      : 0;
+    const avgAttendance = subjectRecords.length
+      ? subjectRecords.reduce((sum, r) => sum + r.attendance, 0) / subjectRecords.length
+      : 0;
+    const passRate = subjectRecords.length
+      ? (subjectRecords.filter(r => calculatePercentage(r) >= 40).length / subjectRecords.length) * 100
+      : 0;
+
     return {
       ...subject,
       avgMarks: Math.round(avgMarks),
       avgPercentage: Math.round((avgMarks / 100) * 100),
       avgAttendance: Math.round(avgAttendance),
-      passRate: Math.round((subjectRecords.filter(r => calculatePercentage(r) >= 40).length / subjectRecords.length) * 100),
+      passRate: Math.round(passRate),
     };
   });
-  
+
   return {
-    totalStudents: students.length,
+    totalStudents: studentList.length,
     classAvgPercentage: Math.round(classAvgPercentage),
     classAvgAttendance: Math.round(classAvgAttendance),
     atRiskStudents,
@@ -268,4 +304,8 @@ export function getClassStatistics() {
     subjectStats,
     allStudents: studentSummaries,
   };
+}
+
+export function getClassStatistics() {
+  return getClassStatisticsWithData(students, subjects, markRecords);
 }

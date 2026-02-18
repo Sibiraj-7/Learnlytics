@@ -7,12 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { 
-  students, 
-  getStudentSummary, 
-  getPerformanceLevel,
-  getAttendanceStatus 
-} from "@/lib/mockData";
+import { useData } from "@/context/DataContext";
+import { getStudentSummaryWithData, getPerformanceLevel, getAttendanceStatus } from "@/lib/mockData";
 import { 
   GraduationCap, 
   TrendingUp, 
@@ -33,8 +29,12 @@ const performanceColors = {
 };
 
 export default function StudentDashboard() {
-  const [selectedStudentId, setSelectedStudentId] = useState(students[0].id);
-  const summary = getStudentSummary(selectedStudentId);
+  const { students, subjects, markRecords } = useData();
+  const [selectedStudentId, setSelectedStudentId] = useState(students[0]?.id ?? "");
+  const effectiveStudentId = students.some((s) => s.id === selectedStudentId)
+    ? selectedStudentId
+    : (students[0]?.id ?? "");
+  const summary = getStudentSummaryWithData(effectiveStudentId, students, subjects, markRecords);
 
   const chartData = summary.subjectPerformance.map(s => ({
     name: s.code,
@@ -51,6 +51,17 @@ export default function StudentDashboard() {
     return 'danger';
   };
 
+  if (!students.length) {
+    return (
+      <Layout>
+        <div className="container py-20 text-center">
+          <p className="text-muted-foreground text-lg mb-4">No student data available.</p>
+          <p className="text-sm text-muted-foreground">Upload a CSV or Excel file from the Upload page, or reset to sample data.</p>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="container py-10">
@@ -61,7 +72,7 @@ export default function StudentDashboard() {
             <p className="text-muted-foreground text-lg">Track your academic performance and get personalized insights</p>
           </div>
           
-          <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
+          <Select value={effectiveStudentId || undefined} onValueChange={setSelectedStudentId}>
             <SelectTrigger className="w-[260px] rounded-xl">
               <SelectValue placeholder="Select student" />
             </SelectTrigger>
