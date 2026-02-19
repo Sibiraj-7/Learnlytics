@@ -144,9 +144,13 @@ export default function UploadData() {
               <li><strong>Required:</strong> Student name, Roll number, Subject (code or name)</li>
               <li><strong>Marks:</strong> Internal 1, Internal 2, Assignment, Attendance (%)</li>
               <li><strong>Optional:</strong> Email, Semester, Department, Credits, Max marks</li>
+              <li><strong>Optional max columns:</strong> Internal 1 Max, Internal 2 Max, Assignment Max — if your marks use different scales (e.g. out of 40), add these to normalize</li>
             </ul>
             <p className="text-xs text-muted-foreground mt-2">
-              One row per student–subject combination. Column names are matched flexibly (e.g. &quot;Roll No&quot;, &quot;RollNo&quot;, &quot;roll_no&quot;).
+              Marks are normalized to a definitive scale: Internal 1 (out of 40), Internal 2 (out of 40), Assignment (out of 20). Total does not exceed 100. Source data (e.g. out of 100 or 50) is auto-detected or set via max columns.
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              One row per student–subject. Column names matched flexibly.
             </p>
             <a
               href="/sample-data.csv"

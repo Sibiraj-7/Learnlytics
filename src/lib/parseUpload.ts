@@ -1,6 +1,7 @@
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 import type { Student, Subject, MarkRecord } from "./mockData";
+import { INTERNAL1_MAX, INTERNAL2_MAX, ASSIGNMENT_MAX } from "./mockData";
 
 const ACCEPTED_TYPES = [
   "text/csv",
@@ -41,6 +42,14 @@ const COLUMN_ALIASES: Record<string, string> = {
   internal2: "internal2",
   assignment: "assignment",
   assignments: "assignment",
+  internal_1_max: "internal1Max",
+  internal1_max: "internal1Max",
+  internal1max: "internal1Max",
+  internal_2_max: "internal2Max",
+  internal2_max: "internal2Max",
+  internal2max: "internal2Max",
+  assignment_max: "assignmentMax",
+  assignmentmax: "assignmentMax",
   attendance: "attendance",
   credits: "credits",
   max_marks: "maxMarks",
@@ -74,6 +83,13 @@ function toNumber(val: string | number, fallback = 0): number {
   if (typeof val === "number" && !Number.isNaN(val)) return val;
   const n = parseFloat(String(val).trim().replace(/,/g, ""));
   return Number.isNaN(n) ? fallback : n;
+}
+
+/** Normalize raw mark to definitive scale. Caps at definitive max. */
+function normalizeMark(raw: number, fileMax: number, definitiveMax: number): number {
+  if (fileMax <= 0) return 0;
+  const normalized = (raw / fileMax) * definitiveMax;
+  return Math.round(Math.min(definitiveMax, Math.max(0, normalized)));
 }
 
 export interface ParseResult {
@@ -175,7 +191,56 @@ function parseRows(rows: Record<string, unknown>[]): ParseResult {
   const internal1Key = col.internal1 || col.internal_1;
   const internal2Key = col.internal2 || col.internal_2;
   const assignmentKey = col.assignment;
+  const internal1MaxKey = col.internal1Max || col.internal_1_max;
+  const internal2MaxKey = col.internal2Max || col.internal_2_max;
+  const assignmentMaxKey = col.assignmentMax || col.assignment_max;
   const attendanceKey = col.attendance;
+
+  // First pass: detect file max per marks column (for normalization to definitive scale)
+  // Supports: (a) explicit "Internal 1 Max" columns, or (b) auto-detect from data
+  // Include 100 so "out of 100" source marks normalize to out of 40
+  const COMMON_INTERNAL_MAXES = [20, 25, 40, 50, 100];
+  const COMMON_ASSIGNMENT_MAXES = [10, 15, 20, 25];
+
+  function nearestCommonMax(value: number, options: number[]): number {
+    if (value <= 0) return options[options.length - 1];
+    return options.reduce((prev, curr) =>
+      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev
+    );
+  }
+
+  let fileInternal1Max = 0;
+  let fileInternal2Max = 0;
+  let fileAssignmentMax = 0;
+  let maxInternal1Seen = 0;
+  let maxInternal2Seen = 0;
+  let maxAssignmentSeen = 0;
+
+  for (const row of rows) {
+    const r1 = toNumber(getRowValue(row, internal1Key, "internal1", "internal 1"), 0);
+    const r2 = toNumber(getRowValue(row, internal2Key, "internal2", "internal 2"), 0);
+    const ra = toNumber(getRowValue(row, assignmentKey, "assignment"), 0);
+    if (internal1MaxKey && !fileInternal1Max) {
+      const m = toNumber(getRowValue(row, internal1MaxKey), 0);
+      if (m > 0) fileInternal1Max = m;
+    }
+    if (internal2MaxKey && !fileInternal2Max) {
+      const m = toNumber(getRowValue(row, internal2MaxKey), 0);
+      if (m > 0) fileInternal2Max = m;
+    }
+    if (assignmentMaxKey && !fileAssignmentMax) {
+      const m = toNumber(getRowValue(row, assignmentMaxKey), 0);
+      if (m > 0) fileAssignmentMax = m;
+    }
+    if (r1 > maxInternal1Seen) maxInternal1Seen = r1;
+    if (r2 > maxInternal2Seen) maxInternal2Seen = r2;
+    if (ra > maxAssignmentSeen) maxAssignmentSeen = ra;
+  }
+
+  // Use explicit max columns if present; else auto-detect from max value (round to common academic scale)
+  if (fileInternal1Max <= 0) fileInternal1Max = nearestCommonMax(maxInternal1Seen, COMMON_INTERNAL_MAXES) || INTERNAL1_MAX;
+  if (fileInternal2Max <= 0) fileInternal2Max = nearestCommonMax(maxInternal2Seen, COMMON_INTERNAL_MAXES) || INTERNAL2_MAX;
+  if (fileAssignmentMax <= 0) fileAssignmentMax = nearestCommonMax(maxAssignmentSeen, COMMON_ASSIGNMENT_MAXES) || ASSIGNMENT_MAX;
 
   if (!nameKey || !rollKey) {
     errors.push("Required columns not found. Need at least: student name and roll number.");
@@ -200,10 +265,14 @@ function parseRows(rows: Record<string, unknown>[]): ParseResult {
       getRowValue(row, subjectNameKey, "subjectName", "subject name", "subject")
     ).trim();
     const code = subjectCode || subjectName || `SUB${idx}`;
-    const internal1 = toNumber(getRowValue(row, internal1Key, "internal1", "internal 1"), 0);
-    const internal2 = toNumber(getRowValue(row, internal2Key, "internal2", "internal 2"), 0);
-    const assignment = toNumber(getRowValue(row, assignmentKey, "assignment"), 0);
+    const rawInternal1 = toNumber(getRowValue(row, internal1Key, "internal1", "internal 1"), 0);
+    const rawInternal2 = toNumber(getRowValue(row, internal2Key, "internal2", "internal 2"), 0);
+    const rawAssignment = toNumber(getRowValue(row, assignmentKey, "assignment"), 0);
     const attendance = toNumber(getRowValue(row, attendanceKey, "attendance"), 0);
+
+    const internal1 = normalizeMark(rawInternal1, fileInternal1Max, INTERNAL1_MAX);
+    const internal2 = normalizeMark(rawInternal2, fileInternal2Max, INTERNAL2_MAX);
+    const assignment = normalizeMark(rawAssignment, fileAssignmentMax, ASSIGNMENT_MAX);
 
     if (!name || !rollNo) {
       errors.push(`Row ${idx + 2}: missing name or roll number.`);

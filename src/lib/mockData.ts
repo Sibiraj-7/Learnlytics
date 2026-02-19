@@ -51,42 +51,38 @@ export const defaultSubjects: Subject[] = [
   { id: 'sub5', name: 'Software Engineering', code: 'CS305', credits: 3, maxMarks: 100 },
 ];
 
-// Sample Mark Records (default / mock)
+// Sample Mark Records (default / mock) — scale: Internal 1 (40) + Internal 2 (40) + Assignment (20) = 100
 export const defaultMarkRecords: MarkRecord[] = [
   // Arjun - Good performer
-  { studentId: 's1', subjectId: 'sub1', internal1: 42, internal2: 45, assignment: 18, attendance: 92 },
-  { studentId: 's1', subjectId: 'sub2', internal1: 38, internal2: 40, assignment: 17, attendance: 88 },
-  { studentId: 's1', subjectId: 'sub3', internal1: 40, internal2: 42, assignment: 19, attendance: 90 },
-  { studentId: 's1', subjectId: 'sub4', internal1: 35, internal2: 38, assignment: 16, attendance: 85 },
-  { studentId: 's1', subjectId: 'sub5', internal1: 44, internal2: 46, assignment: 20, attendance: 95 },
-  
+  { studentId: 's1', subjectId: 'sub1', internal1: 34, internal2: 36, assignment: 18, attendance: 92 },
+  { studentId: 's1', subjectId: 'sub2', internal1: 30, internal2: 32, assignment: 17, attendance: 88 },
+  { studentId: 's1', subjectId: 'sub3', internal1: 32, internal2: 34, assignment: 19, attendance: 90 },
+  { studentId: 's1', subjectId: 'sub4', internal1: 28, internal2: 30, assignment: 16, attendance: 85 },
+  { studentId: 's1', subjectId: 'sub5', internal1: 35, internal2: 37, assignment: 20, attendance: 95 },
   // Priya - Excellent performer
-  { studentId: 's2', subjectId: 'sub1', internal1: 48, internal2: 49, assignment: 20, attendance: 98 },
-  { studentId: 's2', subjectId: 'sub2', internal1: 46, internal2: 48, assignment: 19, attendance: 96 },
-  { studentId: 's2', subjectId: 'sub3', internal1: 47, internal2: 49, assignment: 20, attendance: 97 },
-  { studentId: 's2', subjectId: 'sub4', internal1: 45, internal2: 47, assignment: 19, attendance: 95 },
-  { studentId: 's2', subjectId: 'sub5', internal1: 49, internal2: 50, assignment: 20, attendance: 99 },
-  
+  { studentId: 's2', subjectId: 'sub1', internal1: 38, internal2: 39, assignment: 20, attendance: 98 },
+  { studentId: 's2', subjectId: 'sub2', internal1: 37, internal2: 38, assignment: 19, attendance: 96 },
+  { studentId: 's2', subjectId: 'sub3', internal1: 38, internal2: 39, assignment: 20, attendance: 97 },
+  { studentId: 's2', subjectId: 'sub4', internal1: 36, internal2: 38, assignment: 19, attendance: 95 },
+  { studentId: 's2', subjectId: 'sub5', internal1: 39, internal2: 40, assignment: 20, attendance: 99 },
   // Rahul - Average performer with attendance issues
-  { studentId: 's3', subjectId: 'sub1', internal1: 28, internal2: 32, assignment: 14, attendance: 68 },
-  { studentId: 's3', subjectId: 'sub2', internal1: 30, internal2: 28, assignment: 12, attendance: 65 },
-  { studentId: 's3', subjectId: 'sub3', internal1: 25, internal2: 30, assignment: 13, attendance: 70 },
-  { studentId: 's3', subjectId: 'sub4', internal1: 32, internal2: 35, assignment: 15, attendance: 72 },
-  { studentId: 's3', subjectId: 'sub5', internal1: 29, internal2: 31, assignment: 14, attendance: 67 },
-  
+  { studentId: 's3', subjectId: 'sub1', internal1: 22, internal2: 26, assignment: 14, attendance: 68 },
+  { studentId: 's3', subjectId: 'sub2', internal1: 24, internal2: 22, assignment: 12, attendance: 65 },
+  { studentId: 's3', subjectId: 'sub3', internal1: 20, internal2: 24, assignment: 13, attendance: 70 },
+  { studentId: 's3', subjectId: 'sub4', internal1: 26, internal2: 28, assignment: 15, attendance: 72 },
+  { studentId: 's3', subjectId: 'sub5', internal1: 23, internal2: 25, assignment: 14, attendance: 67 },
   // Sneha - Good but inconsistent
-  { studentId: 's4', subjectId: 'sub1', internal1: 40, internal2: 30, assignment: 16, attendance: 82 },
-  { studentId: 's4', subjectId: 'sub2', internal1: 35, internal2: 42, assignment: 18, attendance: 85 },
-  { studentId: 's4', subjectId: 'sub3', internal1: 38, internal2: 28, assignment: 15, attendance: 78 },
-  { studentId: 's4', subjectId: 'sub4', internal1: 42, internal2: 38, assignment: 17, attendance: 88 },
-  { studentId: 's4', subjectId: 'sub5', internal1: 30, internal2: 40, assignment: 16, attendance: 80 },
-  
+  { studentId: 's4', subjectId: 'sub1', internal1: 32, internal2: 24, assignment: 16, attendance: 82 },
+  { studentId: 's4', subjectId: 'sub2', internal1: 28, internal2: 34, assignment: 18, attendance: 85 },
+  { studentId: 's4', subjectId: 'sub3', internal1: 30, internal2: 22, assignment: 15, attendance: 78 },
+  { studentId: 's4', subjectId: 'sub4', internal1: 34, internal2: 30, assignment: 17, attendance: 88 },
+  { studentId: 's4', subjectId: 'sub5', internal1: 24, internal2: 32, assignment: 16, attendance: 80 },
   // Vikram - At risk
-  { studentId: 's5', subjectId: 'sub1', internal1: 18, internal2: 22, assignment: 10, attendance: 55 },
-  { studentId: 's5', subjectId: 'sub2', internal1: 20, internal2: 18, assignment: 8, attendance: 52 },
-  { studentId: 's5', subjectId: 'sub3', internal1: 22, internal2: 25, assignment: 11, attendance: 60 },
-  { studentId: 's5', subjectId: 'sub4', internal1: 15, internal2: 20, assignment: 9, attendance: 48 },
-  { studentId: 's5', subjectId: 'sub5', internal1: 24, internal2: 22, assignment: 12, attendance: 58 },
+  { studentId: 's5', subjectId: 'sub1', internal1: 14, internal2: 18, assignment: 10, attendance: 55 },
+  { studentId: 's5', subjectId: 'sub2', internal1: 16, internal2: 14, assignment: 8, attendance: 52 },
+  { studentId: 's5', subjectId: 'sub3', internal1: 18, internal2: 20, assignment: 11, attendance: 60 },
+  { studentId: 's5', subjectId: 'sub4', internal1: 12, internal2: 16, assignment: 9, attendance: 48 },
+  { studentId: 's5', subjectId: 'sub5', internal1: 19, internal2: 18, assignment: 12, attendance: 58 },
 ];
 
 // Backward compatibility: alias for default data
@@ -94,12 +90,18 @@ export const students = defaultStudents;
 export const subjects = defaultSubjects;
 export const markRecords = defaultMarkRecords;
 
-// Helper functions for calculations
+// Definitive mark scale: Internal 1 (40) + Internal 2 (40) + Assignment (20) = 100 total
+export const INTERNAL1_MAX = 40;
+export const INTERNAL2_MAX = 40;
+export const ASSIGNMENT_MAX = 20;
+export const TOTAL_MARKS_MAX = INTERNAL1_MAX + INTERNAL2_MAX + ASSIGNMENT_MAX;
+
+// Helper functions for calculations (uses definitive scale)
 export function calculateTotalMarks(record: MarkRecord): number {
   return record.internal1 + record.internal2 + record.assignment;
 }
 
-export function calculatePercentage(record: MarkRecord, maxMarks: number = 100): number {
+export function calculatePercentage(record: MarkRecord, maxMarks: number = TOTAL_MARKS_MAX): number {
   const total = calculateTotalMarks(record);
   return Math.round((total / maxMarks) * 100);
 }

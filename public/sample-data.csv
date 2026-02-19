@@ -1,7 +1,7 @@
 Student Name,Roll No,Subject Code,Subject Name,Internal 1,Internal 2,Assignment,Attendance,Email,Semester,Department
-Arjun Sharma,CS2101,CS301,Data Structures,42,45,18,92,arjun@college.edu,5,Computer Science
-Arjun Sharma,CS2101,CS302,Database Systems,38,40,17,88,arjun@college.edu,5,Computer Science
-Priya Patel,CS2102,CS301,Data Structures,48,49,20,98,priya@college.edu,5,Computer Science
-Priya Patel,CS2102,CS302,Database Systems,46,48,19,96,priya@college.edu,5,Computer Science
-Rahul Kumar,CS2103,CS301,Data Structures,28,32,14,68,rahul@college.edu,5,Computer Science
-Rahul Kumar,CS2103,CS302,Database Systems,30,28,12,65,rahul@college.edu,5,Computer Science
+Arjun Sharma,CS2101,CS301,Data Structures,34,36,18,92,arjun@college.edu,5,Computer Science
+Arjun Sharma,CS2101,CS302,Database Systems,30,32,17,88,arjun@college.edu,5,Computer Science
+Priya Patel,CS2102,CS301,Data Structures,38,39,20,98,priya@college.edu,5,Computer Science
+Priya Patel,CS2102,CS302,Database Systems,37,38,19,96,priya@college.edu,5,Computer Science
+Rahul Kumar,CS2103,CS301,Data Structures,22,26,14,68,rahul@college.edu,5,Computer Science
+Rahul Kumar,CS2103,CS302,Database Systems,24,22,12,65,rahul@college.edu,5,Computer Science

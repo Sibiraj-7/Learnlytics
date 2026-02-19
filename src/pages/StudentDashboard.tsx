@@ -271,8 +271,8 @@ export default function StudentDashboard() {
                               <p className="text-sm text-muted-foreground">{subject.code}</p>
                             </div>
                           </td>
-                          <td className="py-4">{subject.internal1}/50</td>
-                          <td className="py-4">{subject.internal2}/50</td>
+                          <td className="py-4">{subject.internal1}/40</td>
+                          <td className="py-4">{subject.internal2}/40</td>
                           <td className="py-4">{subject.assignment}/20</td>
                           <td className="py-4 font-semibold">{subject.total}/100</td>
                           <td className="py-4">
